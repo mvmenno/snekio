@@ -3,7 +3,10 @@ import {Scene} from './scene';
 import {Line2D} from './line2d';
 import {Geometry} from './geometry';
 import {Material} from './material';
+import {Food} from './food';
 import {Gui} from './gui';
+import {Shader} from './shader';
+import {Helper} from './helper';
 
 class Game {
     
@@ -13,9 +16,6 @@ class Game {
     private snake: Array<BABYLON.Vector3> = [];
     private points: Array<{vector: BABYLON.Vector3, color: BABYLON.Color3}> = [];
     private snakeColor: Array<BABYLON.Color3> = [];
-    private geometry: Geometry;
-    private material: Material;
-    private gui: Gui;
     private postProcess: BABYLON.PostProcess;
     private fadeLevel:number = 1.0;
 
@@ -36,32 +36,20 @@ class Game {
     
     private meshCount : number = 0;
     
+    /*
+     * Define class types
+     */
+    private geometry: Geometry;
+    private material: Material;
+    private food: Food;
+    private gui: Gui;
+    private shader: Shader;
+    private helper : Helper;
     
     constructor() {
         
         this.engine = new BABYLON.Engine(this.canvas, true);
-
         this.scene = new Scene(this.engine);
-        /*
-        BABYLON.Effect.ShadersStore["fadePixelShader"] =
-                        "precision highp float;" +
-                        "varying vec2 vUV;" +
-                        "uniform sampler2D textureSampler; " +
-                        "uniform float fadeLevel; " +
-                        "void main(void){" +
-                        "vec4 baseColor = texture2D(textureSampler, vUV) * fadeLevel;" +
-                        "baseColor.a = 1.0;" +
-                        "gl_FragColor = baseColor;" +
-	"}";
-        
-        this.postProcess = new BABYLON.PostProcess("Fade", "fade", ["fadeLevel"], null, 1.0, this.scene.camera);
-        this.postProcess.onApply = (effect) => {
-            effect.setFloat("fadeLevel", this.fadeLevel);
-        };
-        */
-        this.material = new Material(this.scene);
-        this.geometry = new Geometry(this.scene,this.material);
-        this.gui = new Gui();
         
         this.scene.onPointerObservable.add((pointerInfo) => {
             this.mouse = pointerInfo.pickInfo.ray.direction;
@@ -80,6 +68,15 @@ class Game {
             width : 3,
             height : 3
         };
+	
+	
+	// Init other classes
+	this.material = new Material(this.scene);
+        this.geometry = new Geometry(this.scene,this.material);
+	this.food = new Food(this.world,this.geometry);
+        this.gui = new Gui();
+	this.shader = new Shader();
+        this.helper = new Helper();
         
         var scene = this.scene;
         this.createBoundingBox();
@@ -120,10 +117,46 @@ class Game {
         
     }
     
-    
-    
     drawCircle(position: BABYLON.Vector3, radius: number, color: BABYLON.Color3 = new BABYLON.Color3(1, 1, 1),index  : number) {
         return this.geometry.drawCircle(position,radius,color,index);
+    }
+
+    lerpColor(h1:number,h2:number,steps:number){
+        var d = h2 - h1;
+        var delta = (d + ((Math.abs(d) > 180) ? ((d < 0) ? 360 : -360) : 0)) / (steps + 1.0);
+    //    var turns = [];
+        
+        /*
+        for (var i = 1; d && i <= steps; ++i)
+        turns.push(((h1 + (delta * i)) + 360) % 360);
+        */
+        var c = ((h1 + (delta)) + 360) % 360;
+        
+        return c;
+    }
+
+
+    createSnakeColor(){
+        var color:BABYLON.Color3;
+        if(this.snakeColor.length == 0){
+            color = new BABYLON.Color3(Math.random(), Math.random(), Math.random());
+        }else{
+            
+            var colorp = this.snakeColor[this.snakeColor.length -1].toHSV();
+            var colorr = new BABYLON.Color3(Math.random(), Math.random(), Math.random()).toHSV();
+         
+            var r = this.lerpColor(colorp.r,colorr.r,25);
+            var g = this.lerpColor(colorp.g,colorr.g,25);
+            var b = this.lerpColor(colorp.b,colorr.b,25);
+            
+            var colorRef = new BABYLON.Color3(0,0,0);
+            BABYLON.Color3.HSVtoRGBToRef(r,g,b,colorRef);
+            
+            color = colorRef;
+            
+        }
+        
+        this.snakeColor.push(color);
     }
 
 
@@ -133,17 +166,48 @@ class Game {
 
             var x1 = snakePos.x;
             var y1 = snakePos.y;
-            for (var i = 0; i < this.points.length; i++) {
-                var point = this.points[i];
-
-                var distance = Math.sqrt(Math.pow(x1 - point.vector.x, 2) + Math.pow(y1 - point.vector.y, 2));
-                if (distance < 0.075) {
-                    this.points.splice(i, 1);
-                    this.snakeColor.push(new BABYLON.Color3(Math.random(), Math.random(), Math.random()));
-                    this.snake.push(new BABYLON.Vector3(0, this.snake.length * 0.0001, 0));
+	    
+	    var points = this.food.getFood();
+            var chunkCoord =  this.helper.getChunkFromCoord(snakePos,this.world);
+            
+            
+            
+            var surroundingChunks = this.helper.getIncludingSurroundingChunks(chunkCoord);
+            
+            for (var i = 0; i < surroundingChunks.length; i++){
+                var currentChunk = surroundingChunks[i];
+                if (points[currentChunk]){
+                    for (var j = 0; j < points[currentChunk].length; j++) {
+                        var point = points[currentChunk][j];
+                        
+                        if(point){
+                            var distance = Math.sqrt(Math.pow(x1 - point.vector.x, 2) + Math.pow(y1 - point.vector.y, 2));
+                            if (distance < 0.075) {
+                               // console.log('snakePos {x:'+x1+' y:'+y1+'} pointPos {x:'+point.vector.x+' y:'+point.vector.y+'} ');
+                                this.food.eatFood(currentChunk,j);
+                                this.createSnakeColor();
+                                this.snake.push(new BABYLON.Vector3(0, this.snake.length * 0.0001, 0));
+                            }
+                        }
+                    }
                 }
             }
+            
+            
+            /*
+            if(points[chunkCoord]){
+                for (var i = 0; i < points[chunkCoord].length; i++) {
+                    var point = points[chunkCoord][i];
 
+                    var distance = Math.sqrt(Math.pow(x1 - point.vector.x, 2) + Math.pow(y1 - point.vector.y, 2));
+                    if (distance < 0.075) {
+                        this.food.eatFood(chunkCoord,i);
+                        this.snakeColor.push(new BABYLON.Color3(Math.random(), Math.random(), Math.random()));
+                        this.snake.push(new BABYLON.Vector3(0, this.snake.length * 0.0001, 0));
+                    }
+                }
+            }
+            */
 
             for(var i = this.snake.length -1; i >= 4; i --){
                 var point2 = this.snake[i];
@@ -158,10 +222,10 @@ class Game {
             }
 
             if(this.snake[0].x > this.world.width || this.snake[0].x < -this.world.width){
-                this.triggerDeath();
+              //  this.triggerDeath();
             }
             if(this.snake[0].y > this.world.height || this.snake[0].y < -this.world.height){
-                this.triggerDeath();
+              //  this.triggerDeath();
             }
         }
     }
@@ -192,7 +256,7 @@ class Game {
         var red = 0.8;
         var white = 0.3;
         for(var i = 0 ; i < 9; i ++){
-        var points = [
+            var points = [
                 new BABYLON.Vector3(-mwidth,-mheight,zIndex),
                 new BABYLON.Vector3(mwidth,-mheight,zIndex),
                 new BABYLON.Vector3(mwidth,mheight,zIndex),
@@ -202,17 +266,8 @@ class Game {
                 new BABYLON.Vector3(mwidth + width,-mwidth - width,zIndex),
                 new BABYLON.Vector3(mwidth + width,mwidth + width,zIndex),
                 new BABYLON.Vector3(-mwidth - width,mwidth + width,zIndex),
-                new BABYLON.Vector3(-mwidth - width,-mwidth - width,zIndex),
-
-
-
-            /*    new BABYLON.Vector3(-this.world.width - width,-this.world.height - width,0),
-                new BABYLON.Vector3(this.world.width + width,-this.world.height - width,0),
-                new BABYLON.Vector3(-this.world.width - width,this.world.height + width,0),
-                new BABYLON.Vector3(this.world.width + width,this.world.height + width,0)*/
+                new BABYLON.Vector3(-mwidth - width,-mwidth - width,zIndex)
             ];
-
-           //var hex = BABYLON.Mesh.CreateLines("boundingHex",points,this.scene);
             var filled_hex = BABYLON.Mesh.CreateRibbon("boundingHex",[points],true,false,0,this.scene);
             
             if(i == 0){
@@ -221,8 +276,6 @@ class Game {
                 this.material.setColor(new BABYLON.Color3(white,white,white));
             }
             var mat = this.material.createMaterial("boundingMat");
-
-          //  filled_hex.color = new BABYLON.Color3(1,0,0);
             filled_hex.material = mat;
             
             zIndex --;
@@ -230,18 +283,20 @@ class Game {
             mwidth -= width * i;
             mheight -= width * i;
         }
-        
-        
-        
-        
     }
     createSnake() {
-        var length = 3;
+        var length = 6;
 
         var addLength = 0.0001;
         var currentLength = 0;
         
-        var headColor =  new BABYLON.Color3(Math.random(), Math.random(), Math.random());     
+        var r = Math.random() * 0.8 + 0.5;
+        var g = Math.random() * 0.8 + 0.5;
+        var b = Math.random() * 0.8 + 0.5;
+        
+        
+        var headColor =  new BABYLON.Color3(r, g, b);     
+        
         for (var i = 0; i < length; i++) {
             this.snake.push(new BABYLON.Vector3(0, currentLength, 0));   
             
@@ -262,35 +317,14 @@ class Game {
                 r = 0.025;
             }
             
-            this.drawCircle(this.snake[i], r, this.snakeColor[i],i + 1000);
-        }
-    }
-    createPoints() {
-        while (this.points.length < 500) {
-            var maxWidth = this.world.width * 2;
-            var maxHeight = this.world.height * 2;
-
-            var posX = (Math.random() * maxWidth)  - (maxWidth / 2);
-            var posY = (Math.random() * maxHeight) - (maxHeight / 2);
-            var point = {
-                vector: new BABYLON.Vector3(posX, posY, 0),
-                color: new BABYLON.Color3(0.31, 0.75, 0.43)
-            };
-            this.points.push(point);
-        }
-    }
-    drawPoints() {
-        for (var i = 0; i < this.points.length; i++) {
-            var point = this.points[i];
-            this.drawCircle(point.vector, 0.025, point.color,(this.snake.length + i));
+            this.drawCircle(this.snake[i], r, this.snakeColor[i],i);
         }
     }
     update() {
         this.frameCnt ++;
 
         if(!this.pauzed && this.snake[0]){
-            this.createPoints();
-            
+	    this.food.createFood();
             var x1 = this.mouse.x + this.snake[0].x ;
             var y1 = this.mouse.y + this.snake[0].y;
 
@@ -303,9 +337,9 @@ class Game {
             
             var distance = Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
             
-            var angle = this.currentAngle;
+          //  var angle = this.currentAngle;
             
-            angle = Math.atan2(dy, dx);
+            var angle = Math.atan2(dy, dx);
             
             
            // angle = angle / distance;
@@ -317,13 +351,49 @@ class Game {
             var dampening = 0;
             var angleDiff = angle - this.currentAngle;
             
+            var angleDiff = 0;
+            
+            if(angle > this.currentAngle){
+                angleDiff = angle - this.currentAngle;
+            }else if(angle < this.currentAngle){
+                angleDiff = this.currentAngle - angle;
+            }
+            
+            
+            /*
             if(distance > 0){
             
                 dampening = (angle / distance) * (0.00085);
             }
-            angle += dampening;
+            */
+            //angle += dampening;
             
-            var d = 0.05;
+            
+            var angularDrag = 0.25;
+            
+            var maxAngleChange = 0.1;
+            
+            
+            if(this.currentAngle){
+                if(angleDiff  > maxAngleChange || angleDiff < -maxAngleChange){
+                    var dampening = angleDiff * angularDrag;
+                    angle * dampening;
+                }
+                
+                
+               // angularDrag = this.currentAngle * 0.005;
+                
+             //   angularDrag = 0.999999;
+                
+                
+             //   angle = angle * ((angle / (this.currentAngle* angularDrag)) );
+                
+            }
+            
+            this.currentAngle = angle;
+            
+            
+            var d = 0.01;
 
             var snake = this.snake;
 
@@ -336,8 +406,6 @@ class Game {
 
 
             for (var i = snake.length - 1; i >= 1; i--) {
-                
-               var sf = i / snake.length * 0.02;
                 
                 this.snake[i].x = (this.snake[i - 1].x ) - d * (Math.cos(angle + (angle * angularDrag)));
                 this.snake[i].y = (this.snake[i - 1].y ) - d * (Math.sin(angle + (angle * angularDrag)) );
@@ -360,8 +428,7 @@ class Game {
             this.scene.camera.setTarget(this.snake[0]);
 
             this.checkCollision();
-            this.drawPoints();
-           
+	    this.food.drawFood();
         } 
         this.drawSnake();
         this.drawScore();
