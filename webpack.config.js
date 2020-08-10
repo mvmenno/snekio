@@ -1,10 +1,13 @@
 const path = require('path');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
+//'./server/src/server.ts'
 
-
-module.exports = {
-  entry: './src/game.ts',
+module.exports = [{
+  name: 'client',
+  entry: {
+    client : './client/src/game.ts',
+  },
   watch:true,
   mode: 'development',
   resolve: {
@@ -18,7 +21,7 @@ module.exports = {
   },
   output: {
     filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'client/dist'),
   },
   optimization: {
     minimize: true,
@@ -26,4 +29,30 @@ module.exports = {
       include: /\.min\.js$/
     })]
   }
-};
+},{
+name: 'server',
+    entry: {
+        server : './server/src/server.ts',
+    },
+   /* node: {
+        fs: 'empty',
+        net: 'empty'
+    }, */
+    watch:true,
+    mode: 'development',
+    target: 'node',
+    resolve: {
+      extensions: [ '.ts', '.js' ],
+    },
+    module: {
+      rules: [{
+        test: /\.tsx?$/,
+        loader: 'ts-loader'
+      }]
+    },
+    output: {
+      filename: 'bundle.js',
+      path: path.resolve(__dirname, 'server/dist'),
+    }
+    
+}];

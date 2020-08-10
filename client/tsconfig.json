@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "outDir": "./client/dist/",
+    "sourceMap": true,
+    "noImplicitAny": true,
+    "moduleResolution": "node",
+    "jsx": "react",
+    "allowJs": true
+  }
+}

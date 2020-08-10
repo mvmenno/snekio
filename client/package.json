@@ -1,0 +1,26 @@
+{
+    "name": "BabylonSnake2-client",
+    "version": "1.0.0",
+    "keywords": [
+        "util",
+        "functional",
+        "server",
+        "client",
+        "browser"
+    ],
+    "author": "menno",
+    "contributors": [],
+    "devDependencies": {
+        "ts-loader": "^7.0.5",
+        "ts-node-dev": "^1.0.0-pre.39",
+        "typescript": "^3.9.7"
+    },
+    "dependencies": {
+        "@babylonjs/core": "^4.1.0",
+        "babylonjs": "^4.1.0",
+        "babylonjs-gui": "^4.1.0",
+        "@types/socket.io-client": "^1.4.33",
+        "errorhandler": "^1.5.1",
+        "socket.io-client": "^2.3.0"
+    }
+}
