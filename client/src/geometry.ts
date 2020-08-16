@@ -98,7 +98,11 @@ export class Geometry {
 	
 	return mesh;
     }
-    
+    clearIndex(index:number){
+        if(this.drawCircles[index]){
+            this.drawCircles[index].ribbon.dispose();
+        }
+    }
     
     clearAll(){
         for (var i = 0; i < this.drawCircles.length;i++){

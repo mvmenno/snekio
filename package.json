@@ -15,7 +15,7 @@
     "contributors": [],
     "devDependencies": {
         "ts-loader": "^7.0.5",
-        "ts-node-dev": "^1.0.0-pre.39",
+        "ts-node-dev": "^1.0.0-pre.57",
         "typescript": "^3.9.7",
         "uglifyjs-webpack-plugin": "^2.2.0",
         "unminified-webpack-plugin": "^2.0.0",

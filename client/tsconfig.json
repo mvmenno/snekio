@@ -5,6 +5,6 @@
     "noImplicitAny": true,
     "moduleResolution": "node",
     "jsx": "react",
-    "allowJs": true
+    "allowJs": true,
   }
 }

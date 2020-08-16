@@ -37,6 +37,20 @@ export class Food{
         }
     }
     updateFood(foodData :Array<Array<{vector: BABYLON.Vector3}>>){
+        
+        var c = this.foodIdx;
+        /*for(var i = 0; i < this.food.length;i++){
+            for(var j = 0; j < foodData.length; j ++){
+                if(!foodData[i]){
+                    this.geometry.clearIndex(c);
+                }
+            }
+            c++;
+        }*/
+        
+        
+        
+        //this.geometry.clearAll();
         if(foodData){
             this.food = foodData;
         }
@@ -47,8 +61,10 @@ export class Food{
             for (var i = 0; i < this.food.length; i++) {
                 if(this.food[i]){
                     for (var j = 0; j < this.food[i].length; j++) {
-                        var point = this.food[i][j];
-                        this.geometry.drawCircle(point.vector, 0.025, this.foodColor,(this.foodIdx + i + j));                     
+                        if(this.food[i][j]){
+                            var point = this.food[i][j];
+                            this.geometry.drawCircle(point.vector, 0.025, this.foodColor,(this.foodIdx + i + j));               
+                        }
                     }
                 }
             }

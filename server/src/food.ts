@@ -5,14 +5,15 @@
  */
 import * as BABYLON from 'babylonjs';
 import {Helper} from './helper';
+import {Snake} from './snake';
 
 export class Food{
     
     private food:Array<Array<{vector: BABYLON.Vector3}>> = [];
     private world : {width: number ,height: number};
-    private foodIdx: number = 1000;
+    private foodIdx: number = 10000;
     
-    private maxFood : number = 1000;
+    private maxFood : number = 500;
     private currentFood : number = 0;
     private helper : Helper;
     
@@ -26,6 +27,7 @@ export class Food{
     eatFood(chunkCoord:number,index:number){
         if(this.food[chunkCoord]){
             this.food[chunkCoord].splice(index,1);
+            this.currentFood -= 1;
         }
     }
     createFood() {
@@ -34,12 +36,12 @@ export class Food{
         
         //&& ic < maxI
         while (this.currentFood < this.maxFood && ic < maxI ) {
-            var maxWidth = this.world.width * 2;
-            var maxHeight = this.world.height * 2;
+            var maxWidth = this.world.width;
+            var maxHeight = this.world.height;
 	    
-            var posX = (Math.random() * maxWidth)  - (maxWidth );
-            var posY = (Math.random() * maxHeight) - (maxHeight);
-	    
+            var posX = (Math.random() * (maxWidth + maxWidth))  - maxWidth;
+            var posY = (Math.random() * (maxHeight + maxHeight)) - maxHeight;
+            
             var vector = new BABYLON.Vector3(posX,posY,0);
             
 	    var chunkCoord =  this.helper.getChunkFromCoord(vector,this.world);
