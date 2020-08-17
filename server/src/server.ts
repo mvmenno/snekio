@@ -198,9 +198,10 @@ class NodeServer{
                 i++;
             }
         }
-        this.snake.updateSnakePlayers(this.players);
-       // this.players[i].velocity = velocity;
-        this.io.sockets.emit('update-players',players);
+        //if(this.players.length > 0){
+            this.snake.updateSnakePlayers(this.players);
+            this.io.sockets.emit('update-players',players);
+      //  }
     }
 }
 var nodeServer = new NodeServer();

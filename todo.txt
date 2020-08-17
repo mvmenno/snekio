@@ -1,0 +1,19 @@
+Bugs:
+- oob undefined snake oob check collision.ts?:50
+
+Features:
+H:
+- place player randomly in world
+- make radius snake bigger if longer
+- clicking first mouse button causes temporary speed boost
+
+L:
+- animation food
+- snake glow animation
+
+
+Optimization:
+- only send updated food to clients and on first connect return all food
+
+L:
+- (optional) Only send head of snake? and synchronize whole snake once every second

@@ -55,21 +55,21 @@ export class Collision{
         return atePoints;
     }
     collisionOOB(player){
-        var p1 = player.snake[0];
         
-        
-
-         //   if(this.snake[0].x > this.world.width || this.snake[0].x < -this.world.width){
-        if(p1){
-           // console.log(p1);
-            if(p1.x > this.world.width || p1.x < -this.world.width){
-                return true;
+        if(player){
+            var p1 = player.snake[0];
+             //   if(this.snake[0].x > this.world.width || this.snake[0].x < -this.world.width){
+            if(p1){
+               // console.log(p1);
+                if(p1.x > this.world.width || p1.x < -this.world.width){
+                    return true;
+                }
+                if(p1.y > this.world.height || p1.x < -this.world.height){
+                    return true;
+                }
             }
-            if(p1.y > this.world.height || p1.x < -this.world.height){
-                return true;
-            }
+            return false;
         }
-        return false;
     }
     collisionPlayer(player,players){
         
