@@ -76,7 +76,6 @@ class NodeServer{
                 self.players[socket.id] = {};
                 console.log('Player connected!');
                 console.log(state);
-            
                self.players[socket.id] = state;
                self.players[socket.id].score = 0;
                self.players[socket.id].snake = [];

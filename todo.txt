@@ -1,9 +1,9 @@
 Bugs:
-- oob undefined snake oob check collision.ts?:50
+- oob undefined snake oob check collision.ts?:50 DONE
 
 Features:
 H:
-- place player randomly in world
+- place player randomly in world DONE
 - make radius snake bigger if longer
 - clicking first mouse button causes temporary speed boost
 

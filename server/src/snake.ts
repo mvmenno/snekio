@@ -16,8 +16,14 @@ export class Snake{
         var addLength = 0.0001;
         var currentLength = 0;
         this.snakeArr[sessionId] = [];
+                var maxWidth = 6 - 0.1;
+                var maxHeight = 6 - 0.1;
+
+                var posX = (Math.random() * (maxWidth + maxWidth))  - maxWidth;
+                var posY = (Math.random() * (maxHeight + maxHeight)) - maxHeight;
+        
         for (var i = 0; i < this.initSnakeLength; i++){
-           var newVector = new BABYLON.Vector3(player.x,player.y + currentLength ,0);
+           var newVector = new BABYLON.Vector3(posX,posY + currentLength ,0);
            this.snakeArr[sessionId].push(newVector);
            currentLength += addLength;
         }
