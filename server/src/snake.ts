@@ -12,6 +12,12 @@ export class Snake{
     protected snakeArr : [Array<BABYLON.Vector3>] = [[]];
     protected playerVelocities : [{}] = [{}];
     protected t = Date.now();
+    protected initRadius : number;
+    constructor(initRadius : number){
+        this.initRadius = initRadius;
+    }
+    
+    
     createSnake(player,sessionId){
         var addLength = 0.0001;
         var currentLength = 0;
@@ -35,7 +41,7 @@ export class Snake{
             return [];
         }
     }
-    addLengthPlayerSnake(sessionId,length : number){
+    addLengthPlayerSnake(sessionId,radius : number,length : number){
         if(this.snakeArr[sessionId]){
             for(var i =0; i < length; i++){
                 var lastSegment = this.snakeArr[sessionId][this.snakeArr.length - 1];
@@ -44,6 +50,12 @@ export class Snake{
                 this.snakeArr[sessionId].push(newVector);
             }
         }
+        
+        var s = 0.0002;
+        // var s = 0.02;
+        
+        var r = this.initRadius + ( (this.snakeArr[sessionId].length - this.initSnakeLength) * s);  
+        return r;
     }
     setPlayerVelocity(vx:number,vy:number,sessionId){
         var velocity = {vx:vx,vy:vy};
@@ -96,7 +108,9 @@ export class Snake{
                     
                   //  var sf = playerSnake.length / 1.1;
                     
-                    var sf = 1 - ( (playerSnake.length - this.initSnakeLength) * 0.0002);  
+                    var s = 0.0002;
+                   // var s = 0.02;
+                    var sf = 1 - ( (playerSnake.length - this.initSnakeLength) * s);  
                     
                     
                     if(sf > 1){

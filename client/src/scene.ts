@@ -11,6 +11,7 @@ export class Scene extends BABYLON.Scene {
     }
     public createScene() {
         this.camera = new BABYLON.ArcRotateCamera("Camera", Math.PI / 2, Math.PI / 2, 2, new BABYLON.Vector3(0, 0, 5), this);
+        
         var color = new BABYLON.Color4(0, 0, 0, 1);
         this.clearColor = color;
         this.blockfreeActiveMeshesAndRenderingGroups = true;

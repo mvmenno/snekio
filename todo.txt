@@ -6,6 +6,7 @@ H:
 - place player randomly in world DONE
 - make radius snake bigger if longer
 - clicking first mouse button causes temporary speed boost
+- zoom camera out if snake is bigger than screen
 
 L:
 - animation food

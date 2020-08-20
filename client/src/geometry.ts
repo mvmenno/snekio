@@ -6,7 +6,7 @@ export class Geometry {
     private scene : BABYLON.Scene;
     private material : Material;
     public drawCircles: Array<{ribbon: BABYLON.Mesh}> = [];
-    
+    private lastRadius : number;
     
     constructor(scene:BABYLON.Scene,material:Material){
         this.scene = scene;
@@ -14,7 +14,8 @@ export class Geometry {
     }
     
     drawCircle(position: BABYLON.Vector3, radius: number, color: BABYLON.Color3 = new BABYLON.Color3(1, 1, 1),index  : number) {
-            if(!this.drawCircles[index]){
+        
+        if (!this.drawCircles[index]){
                 var detail = 1;
                 var c = 0.552285;
 
@@ -47,17 +48,11 @@ export class Geometry {
                 var arcCurve = arcCurve1.continue(arcCurve2);
                 
                 
-                
-                
                 var filled_hex = BABYLON.Mesh.CreateRibbon("hex", [arcCurve.getPoints()], true, false, 0, this.scene);
 	      
-		//var filled_hex = BABYLON.Mesh.CreateRibbon("hex", { pathArray :arcCurve.getPoints() },this.scene );
-		
-		var colors = [];
 		
 		var points = arcCurve.getPoints();
 		
-		var color4 = new BABYLON.Color4(color.r,color.g,color.b,1);
 		
 		for(var i =0 ; i < points.length / 3;i++){
 		 //   colors.push(color4);
@@ -77,11 +72,14 @@ export class Geometry {
                 };
                 this.drawCircles[index].ribbon.position = position;
 		filled_hex.visibility = 1;
-		
+		this.lastRadius = radius;
             }else{
 		//this.setColorMesh(this.drawCircles[index].ribbon,color);
-		
-                this.drawCircles[index].ribbon.position = position;
+
+                this.drawCircles[index].ribbon.position = position;	
+                if(radius != this.lastRadius && radius != this.drawCircles[index].ribbon.scaling.x){
+                    this.drawCircles[index].ribbon.scaling = new BABYLON.Vector3(radius,radius,0);
+                }
             }
     }
     setColorMesh(mesh:BABYLON.Mesh,color:BABYLON.Color3){

@@ -46,10 +46,14 @@ export class Gui{
         
         title.text = "Snek.IO"
         title.color = "#49a0de";
-        title.fontSize = 64;
+        title.fontSize = "72px";
         title.fontWeight = "bold";
         title.outlineWidth = 5;
         title.top = -100;
+        title.shadowBlur = 20;
+        title.shadowColor = "#000";
+        title.shadowOffsetY = 14;
+        
         this.GUITitle = title;
         advancedTexture.addControl(title);
     }
@@ -121,8 +125,8 @@ export class Gui{
         
         playButton.color = "#000";
         playButton.background = "#59e639";
-
-        
+        playButton.textBlock.fontSize = "24px";
+        playButton.textBlock.fontWeight = "bold";
         var self = this;    
 
         playButton.onPointerClickObservable.add(function(e){
@@ -157,6 +161,8 @@ export class Gui{
             highScoreTitle.textVerticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
             highScoreTitle.top = 0;
             highScoreTitle.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+            highScoreTitle.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+
             highScoreTitle.text = "HighScores:";
             highScoreTitle.color = "#fff";
             highScores.addControl(highScoreTitle);

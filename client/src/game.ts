@@ -5,6 +5,7 @@ import {Geometry} from './geometry';
 import {Material} from './material';
 import {Food} from './food';
 import {Gui} from './gui';
+import {ParticleSystem} from './particleSystem';
 import {Shader} from './shader';
 import {Helper} from './helper';
 import * as io from "socket.io-client";
@@ -25,7 +26,8 @@ class Game {
         angle : number
         uuid : string,
         color : BABYLON.Color3,
-        velocity : {vx:number,vy:number}
+        velocity : {vx:number,vy:number},
+        radius : number
     }> = [];
     
     private playerFrames : any = [];
@@ -71,7 +73,7 @@ class Game {
     
     private leaderBoard : [{nickName :string,score:number}];
     private uuid : string = this.uuidv4();
-    
+    private particleSystem : ParticleSystem;
     
     constructor() {
         
@@ -102,10 +104,18 @@ class Game {
 	this.material = new Material(this.scene);
         this.geometry = new Geometry(this.scene,this.material);
 	this.food = new Food(this.world,this.geometry);
+      //  this.particleSystem = new ParticleSystem(this.scene,this.world);
+        
+        //create PS background star system
+       // this.particleSystem.createStarSystem();
         
         this.gui = new Gui();
         
 	this.shader = new Shader();
+        
+        this.shader.createShader(this.scene,this.world);
+        
+        
         this.helper = new Helper();
         
         var scene = this.scene;
@@ -175,16 +185,6 @@ class Game {
                 for(var i = 0 ; i < players.length; i++){
                     if(players[i]){
                         if(players[i].uuid == self.uuid){
-                            var snake = players[i].snake;
-                            if(snake){
-                                for(var j = 0; j < snake.length; j++){
-                                   // self.snake[j] = new BABYLON.Vector3(snake[j].x,snake[j].y,0);
-                                }
-                                //self.snake = players[i].snake;
-                            }
-                            /*if(players[i].color){
-                                players[i].color = new BABYLON.Color3(players[i].color.r,players[i].color.g,players[i].color.b);
-                            }*/
                             if(players[i].velocity){
                                 self.velocity = new BABYLON.Vector3(players[i].velocity.vx / 10,players[i].velocity.vy / 10,0);
                             }
@@ -397,7 +397,7 @@ class Game {
         
         var red = 0.8;
         var white = 0.3;
-        for(var i = 0 ; i < 9; i ++){
+        for(var i = 0 ; i < 1; i ++){
             var points = [
                 new BABYLON.Vector3(-mwidth,-mheight,zIndex),
                 new BABYLON.Vector3(mwidth,-mheight,zIndex),
@@ -549,7 +549,13 @@ class Game {
                 if(this.players[i].color){
                     color = new BABYLON.Color3(this.players[i].color.r,this.players[i].color.g,this.players[i].color.b);
                 }
-                var r = 0.025;
+                var r = this.players[i].radius;
+                
+                if(!r){
+                    break;
+                }
+                
+                
                // console.log(i);
                 if(this.playerFrames[this.players[i].uuid]){
                     snake = this.playerFrames[this.players[i].uuid][0];
@@ -639,6 +645,10 @@ class Game {
             this.scene.camera.setTarget(this.snake[0]);
             
             
+            
+            this.shader.updateShader(this.snake[0]);
+            
+            
 	    this.food.drawFood();
             this.drawSnake();
             if(this.isDeath){
@@ -659,7 +669,7 @@ class Game {
             }
         } 
         
-        
+      //  this.particleSystem.updateSPS();
         
         return this.scene;
     }

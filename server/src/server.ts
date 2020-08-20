@@ -19,7 +19,8 @@ class NodeServer{
         angle : number
         uuid : string,
         color : BABYLON.Color3,
-        velocity : any
+        velocity : any,
+        radius : number
     }> = [];
     
     private serverFPS : number = 20;
@@ -31,7 +32,7 @@ class NodeServer{
     private food : Food;
     private collision: Collision;
     private snake : Snake;
-    
+    private initRadius : number = 0.05;
     
     constructor(){        
         this.world = {
@@ -39,7 +40,7 @@ class NodeServer{
             height : 6
         };
         
-        this.snake = new Snake();
+        this.snake = new Snake(this.initRadius);
         this.food = new Food(this.world);
         this.collision = new Collision(this.world);
         
@@ -80,13 +81,15 @@ class NodeServer{
                self.players[socket.id].score = 0;
                self.players[socket.id].snake = [];
                self.players[socket.id].velocity = {};
+               self.players[socket.id].radius = this.initRadius;
+               
                 var cr = (Math.random() * 1) + 0.5;
                 var cg = (Math.random() * 1) + 0.5;
                 var cb = (Math.random() * 1) + 0.5;
                     
                self.players[socket.id].color = new BABYLON.Color3(cr,cg,cb);
                // Broadcast a signal to everyone containing the updated players list
-               //self.io.emit('update-players',self.players);
+               self.io.emit('update-players',self.players);
        });
     }
     onPlayerDisconnect(socket:socketIo.Socket){
@@ -166,7 +169,7 @@ class NodeServer{
                 
                 if(atePoints > 0){
                    this.players[key].score += atePoints;
-                   this.snake.addLengthPlayerSnake(key,atePoints);
+                   this.players[key].radius = this.snake.addLengthPlayerSnake(key,this.players[key].radius,atePoints);
                    this.updateScorePlayers();
                 }
                 this.players[key].snake = this.snake.getPlayerSnake(key);
@@ -176,7 +179,7 @@ class NodeServer{
                 
                 if(p2){
                     this.players[p2].score += Math.floor(this.players[key].snake.length /2);
-                    this.snake.addLengthPlayerSnake(p2,this.players[key].snake.length / 2);
+                    this.players[key].radius = this.snake.addLengthPlayerSnake(p2,this.players[key].radius,this.players[key].snake.length / 2);
                     this.io.emit('dead-player',this.players[key]);
                     delete this.players[key];
                     this.io.emit('update-players',this.players);
