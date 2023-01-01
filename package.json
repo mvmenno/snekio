@@ -14,12 +14,12 @@
     "author": "menno",
     "contributors": [],
     "devDependencies": {
-        "ts-loader": "^7.0.5",
+        "ts-loader": "^9.4.2",
         "ts-node-dev": "^1.0.0-pre.57",
         "typescript": "^3.9.7",
         "uglifyjs-webpack-plugin": "^2.2.0",
         "unminified-webpack-plugin": "^2.0.0",
-        "webpack": "^4.44.1",
-        "webpack-cli": "^3.3.12"
+        "webpack": "^5.75.0",
+        "webpack-cli": "^5.0.1"
     }
 }
