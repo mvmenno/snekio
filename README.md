@@ -16,3 +16,6 @@ Build the docker image first
 
 Run the docker image
 ``` docker run -d -p 5000:5000 mvmenno/snekio-server ``` 
+
+## Running the server without docker
+run the following command ``` node server/dist/bundle.js ```
