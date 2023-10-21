@@ -5,20 +5,20 @@
   "main": "index.js",
   "author": "menno",
   "dependencies": {
-    "@types/node": "7.0.22",
-    "@types/express": "^4.16.1",
-    "@types/socket.io": "^2.1.2",
     "@babylonjs/core": "^4.1.0",
+    "@types/express": "^4.16.1",
+    "@types/node": "7.0.22",
+    "@types/socket.io": "^2.1.2",
     "babylonjs": "^4.1.0",
     "babylonjs-gui": "^4.1.0",
     "cors": "^2.8.5",
+    "errorhandler": "^1.5.1",
     "express": "^4.17.1",
-    "socket.io": "^2.2.0",
-    "errorhandler": "^1.5.1"
+    "socket.io": "^2.2.0"
   },
   "devDependencies": {
-    "ts-node-dev": "^1.0.0-pre.39",
     "mocha": "3.4.2",
-    "typescript": "^3.4.5"
+    "ts-node-dev": "^1.0.0-pre.39",
+    "typescript": "^5.2.2"
   }
 }

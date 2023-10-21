@@ -1,10 +1,8 @@
 const path = require('path');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+
+const TerserPlugin = require('terser-webpack-plugin');
 
 const Dotenv = require('dotenv-webpack');
-//console.log(process.argv);
-//console.log(process.argv.indexOf('NODE_ENV'));
-
 
 module.exports = (env, argv) => {
 
@@ -31,15 +29,13 @@ module.exports = (env, argv) => {
       },
       optimization: {
         minimize: true,
-        minimizer: [new UglifyJsPlugin({
-          include: /\.min\.js$/
-        })]
+        minimizer: [new TerserPlugin()]
       },
       plugins: [
         new Dotenv({
           path: '.env',
           systemvars: false,
-        })
+        }),
       ]
     },{
     name: 'server',

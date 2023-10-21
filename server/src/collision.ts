@@ -64,7 +64,7 @@ export class Collision{
                 if(p1.x > this.world.width || p1.x < -this.world.width){
                     return true;
                 }
-                if(p1.y > this.world.height || p1.x < -this.world.height){
+                if(p1.y > this.world.height || p1.y < -this.world.height){
                     return true;
                 }
             }
