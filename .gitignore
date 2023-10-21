@@ -1,5 +1,5 @@
 node_modules/
 nbproject/
 .env
-client/dist
-server/dist
+client/dist/bundle*
+server/dist/bundle*

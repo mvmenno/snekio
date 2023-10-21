@@ -10,7 +10,8 @@
     ],
     "scripts": {
         "postinstall": "cd server && npm install && cd ../client && npm install",
-        "build": "webpack"
+        "watch": "webpack",
+        "build": "webpack --mode=production"
     },
     "author": "menno",
     "contributors": [],
@@ -22,10 +23,7 @@
         "typescript": "^3.9.7",
         "uglifyjs-webpack-plugin": "^2.2.0",
         "unminified-webpack-plugin": "^2.0.0",
-        "webpack": "^4.44.1",
+        "webpack": "^5.89.0",
         "webpack-cli": "^3.3.12"
-    },
-    "dependencies": {
-        "dotenv": "^16.3.1"
     }
 }

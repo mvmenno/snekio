@@ -3,6 +3,9 @@
 ## Install
 First run ``` npm install ```
 
+## Development
+This project uses webpack simply run ```npm run watch``` in the root directory
+
 ## Running the client
 The client can be run directly in the browser by visiting:
 ``` client/dist/index.html ```

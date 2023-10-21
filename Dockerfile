@@ -6,6 +6,8 @@ COPY . .
 
 RUN npm install
 
+RUN npm build
+
 EXPOSE 5000
 
-CMD ["node", "dist/bundle.js"]
+CMD ["node", "server/dist/bundle.js"]
