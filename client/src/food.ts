@@ -39,18 +39,7 @@ export class Food{
     updateFood(foodData :Array<Array<{vector: BABYLON.Vector3}>>){
         
         var c = this.foodIdx;
-        /*for(var i = 0; i < this.food.length;i++){
-            for(var j = 0; j < foodData.length; j ++){
-                if(!foodData[i]){
-                    this.geometry.clearIndex(c);
-                }
-            }
-            c++;
-        }*/
         
-        
-        
-        //this.geometry.clearAll();
         if(foodData){
             this.food = foodData;
         }

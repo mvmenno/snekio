@@ -139,6 +139,12 @@ class Game {
 
         this.initServerListeners();
         this.checkGUIState();
+        
+        //add glowlayer maybe?
+        const gl = new BABYLON.GlowLayer("glow", this.scene, {
+            blurKernelSize: 16
+        });
+        gl.intensity = .5;
 
         var self = this;
         window.addEventListener('resize', function () {
