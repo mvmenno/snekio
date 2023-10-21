@@ -6,5 +6,6 @@
     "moduleResolution": "node",
     "jsx": "react",
     "allowJs": true,
+    "types": ["node"]
   }
 }

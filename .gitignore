@@ -1,3 +1,5 @@
 node_modules/
 nbproject/
 .env
+client/dist
+server/dist

@@ -9,7 +9,6 @@ import {ParticleSystem} from './particleSystem';
 import {Shader} from './shader';
 import {Helper} from './helper';
 import * as io from "socket.io-client";
-
 class Game {
     
     private canvas = document.getElementById("renderCanvas") as HTMLCanvasElement;
@@ -144,8 +143,8 @@ class Game {
         this.meshCount ++;
         
         this.scene.camera.position = new BABYLON.Vector3(0, 0, 5);
-        
-        this.socket = io('http://home.mennovanmuilwijk.nl:5000');
+
+        this.socket = io(process.env.SERVER_HOST + ':' + process.env.SERVER_PORT);
 
         this.initServerListeners();
         this.checkGUIState();

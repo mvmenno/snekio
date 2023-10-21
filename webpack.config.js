@@ -1,7 +1,7 @@
 const path = require('path');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
-//'./server/src/server.ts'
+const Dotenv = require('dotenv-webpack');
 
 module.exports = [{
   name: 'client',
@@ -17,7 +17,7 @@ module.exports = [{
     rules: [{
       test: /\.tsx?$/,
       loader: 'ts-loader'
-    }]
+    }],
   },
   output: {
     filename: 'bundle.js',
@@ -28,7 +28,10 @@ module.exports = [{
     minimizer: [new UglifyJsPlugin({
       include: /\.min\.js$/
     })]
-  }
+  },
+  plugins: [
+    new Dotenv()
+  ]
 },{
 name: 'server',
     entry: {
@@ -53,6 +56,9 @@ name: 'server',
     output: {
       filename: 'bundle.js',
       path: path.resolve(__dirname, 'server/dist'),
-    }
-    
+    },
+    externals: {
+      bufferutil: "bufferutil",
+      "utf-8-validate": "utf-8-validate",
+    },
 }];
